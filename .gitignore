@@ -1,0 +1,36 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# 実機デバッグの生成物(画面キャプチャを含むため公開しない)
+debug_logs/
+debug_log.txt
+debug_capture.mp4
+debug_frames/
+debug_frames_history/
+crash_log.txt
+
+# ama のビルド成果物(README の手順でビルドする)
+external/ama-main/bin/
+
+# エディタ・ツール
+.claude/
+
+# 設計資料・作業ファイル(内部資料。リポジトリには含めない)
+input/
+backup/
+
+# PyInstaller のビルド成果物
+build/
+dist/
+PBA_現状まとめ_*.txt
+
+# 画像認識の評価用データ(実機の画面キャプチャを含む)
+vision_eval/
+
+# 全自動のプラグイン(非公開のリポジトリ PT-plugins の puyopuyo/full_auto をリンクする。2026-11-01)
+plugins/full_auto/
+# 全自動のキー割り当て(手元の設定。既定は PT-plugins の defaults/)
+config/keymap.json
+config/keymap_2p.json

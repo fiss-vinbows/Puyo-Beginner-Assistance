@@ -1,0 +1,7 @@
+mss>=9.0.1
+numpy>=1.26.0
+opencv-python>=4.9.0
+PyQt6>=6.6.0
+Pillow>=10.2.0
+# 全自動モードの仮想ゲームパッド(Windows のみ。ViGEmBus ドライバーが要る。PBA の「全自動のキー割り当て」から入れられる)
+vgamepad>=0.1.0; sys_platform == "win32"
