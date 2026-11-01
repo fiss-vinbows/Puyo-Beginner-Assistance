@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -40,6 +41,7 @@ class MainWindowTest(unittest.TestCase):
     def test_yamaneko_only_options_are_disabled_otherwise(self) -> None:
         # 設置キャンセル・段差キャンセル・配ぷよ読みは YamaNEKO の時だけ設定できる(他は暗転)
         box = self.w.side_settings["1p"]
+        _select(self.w, "1p", "yamaneko")  # YamaNEKO が無い環境では初期値が ama になる
         box.haipuyo.setChecked(True)
         self.assertTrue(box.haipuyo.isEnabled())
         self.assertTrue(box.yamaneko_option(box.haipuyo))
@@ -129,6 +131,19 @@ class MainWindowTest(unittest.TestCase):
         self.assertFalse(self.w.pad_kb_switches["1p"].isChecked())
 
 
+class DefaultEngineTest(unittest.TestCase):
+    def test_ama_when_yamaneko_missing(self) -> None:
+        # 配布する exe には YamaNEKO が入らないので、見つからなければ同梱の ama を初期値にする(2026-11-01)
+        from unittest import mock
+
+        from src import app as app_module
+
+        with mock.patch.object(app_module, "resolve_bridge_exe", return_value=Path("Z:/nothing/yamaneko-bridge.exe")):
+            self.assertEqual(app_module.default_engine(), "ama")
+        with mock.patch.object(app_module, "resolve_bridge_exe", return_value=Path(app_module.__file__)):
+            self.assertEqual(app_module.default_engine(), "yamaneko")
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -149,6 +164,7 @@ class CpuControlTest(unittest.TestCase):
         from src import app
 
         box = self.w.side_settings["1p"]
+        _select(self.w, "1p", "yamaneko")  # YamaNEKO が無い環境では初期値が ama になる
         started: dict = {}
         with mock.patch.object(app, "AmaClient", lambda **kw: started.update(kw) or "client"), \
                 mock.patch.object(app.os, "cpu_count", return_value=16):
@@ -172,6 +188,7 @@ class CpuControlTest(unittest.TestCase):
         from src.engine.ama_client import HAIPUYO_BRIDGE_ARGS, PEEK_BRIDGE_ARGS
 
         box = self.w.side_settings["1p"]
+        _select(self.w, "1p", "yamaneko")  # YamaNEKO が無い環境では初期値が ama になる
         started: dict = {}
         with mock.patch.object(app, "AmaClient", lambda **kw: started.update(kw) or "client"):
             self.w._make_client(box, None)

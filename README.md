@@ -1,7 +1,7 @@
 # PBA (Puyo Beginner Assistance)
 
 ぷよぷよテトリス2のぷよぷよ画面をリアルタイムで認識し、最善手(組ぷよの置き場所)を
-オーバーレイ表示する支援AI。[TBA (Tetris Beginner Assistance)](../Tetris) のぷよぷよ版。
+オーバーレイ表示する支援AI。TBA (Tetris Beginner Assistance) のぷよぷよ版。
 
 ## 構成
 
@@ -18,7 +18,19 @@
 - `tools/replay_video.py` — 録画動画で認識→追跡→思考をリプレイ検証
 - `tools/preview_overlay.py` — フレーム画像にオーバーレイを合成して見た目を確認
 
-## セットアップ
+## exe で使う(Windows)
+
+[リリース](https://github.com/fiss-vinbows/Puyo-Beginner-Assistance/releases) から `PBA-<版>.zip` をダウンロードして展開し、
+`PBA.exe` を起動する。Python や g++ は要らない。思考エンジンは ama を同梱している(YamaNEKO は同梱していない)。
+
+exe を自分で作る時は、下のセットアップの後で次を実行する(`dist/PBA/` と `dist/PBA-<版>.zip` ができる):
+
+```bash
+venv\Scripts\pip install pyinstaller
+venv\Scripts\python tools\build_exe.py 0.2.0
+```
+
+## ソースから使う
 
 ### 1. Python環境
 
@@ -87,4 +99,7 @@ venv\Scripts\python -m unittest discover -s tests -v
 
 ## ライセンス
 
-PBA本体は [MIT License](LICENSE)。ama も MIT License(`external/ama-main/LICENSE`)。
+- PBA 本体のソースコードは [MIT License](LICENSE)。同梱の思考エンジン ama も MIT License(`external/ama-main/LICENSE`)。
+- 配布する exe(PBA.exe)は GPL v3 の PyQt6 を含むため、**exe を含む配布物の全体は GPL v3** の条件で配布する。
+  同梱物とそれぞれのライセンスは [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)、ライセンス文の全文は配布物の `licenses/` にある。
+- ぷよぷよテトリス2・ぷよぷよeスポーツは株式会社セガの著作物で、PBA には含まれない。

@@ -50,7 +50,7 @@ from .capture.window_detect import (  # noqa: E402
     title_bar_rect,
 )
 from .window_dialog import WindowPickDialog  # noqa: E402
-from .engine.ama_client import HAIPUYO_BRIDGE_ARGS, PEEK_BRIDGE_ARGS  # noqa: E402
+from .engine.ama_client import HAIPUYO_BRIDGE_ARGS, PEEK_BRIDGE_ARGS, resolve_bridge_exe  # noqa: E402
 from .engine.book_client import BookClient, book_text, is_book_move  # noqa: E402
 from .engine.ama_client import (  # noqa: E402
     NoValidPlacementError,
@@ -2401,6 +2401,11 @@ class SideSettings(QtWidgets.QGroupBox):
             self.changed.emit()
 
 
+def default_engine() -> str:
+    """メイン画面の思考エンジンの初期値。YamaNEKO が見つからなければ同梱の ama(2026-11-01、配布する exe には YamaNEKO が入らない)。"""
+    return "yamaneko" if resolve_bridge_exe().exists() else "ama"
+
+
 class MainWindow(QtWidgets.QWidget):
     autoplay_toggle_requested = QtCore.pyqtSignal(str)  # 切り替えキーが押された側(フックのスレッドから)
     pad_kb_toggled = QtCore.pyqtSignal(str, bool)  # キーボードで仮想パッドを操作するの(側, オン・オフ)(フックのスレッドから)
@@ -2469,7 +2474,7 @@ class MainWindow(QtWidgets.QWidget):
         panels = QtWidgets.QHBoxLayout()
         self.side_settings: dict[str, SideSettings] = {}
         for key in ("1p", "2p"):
-            box = SideSettings(key, "yamaneko" if key == side else "none", self._open_autoplay_keys, languages=languages)
+            box = SideSettings(key, default_engine() if key == side else "none", self._open_autoplay_keys, languages=languages)
             box.changed.connect(self._refresh_calibration_status)
             self.side_settings[key] = box
             panels.addWidget(box, 1)
@@ -2483,7 +2488,7 @@ class MainWindow(QtWidgets.QWidget):
         # 一人用: 相手を見ず、連鎖構築だけを提案する(画面レイアウトが対戦と異なるため、キャリブレーションは別)
         solo = QtWidgets.QWidget()
         s_layout = QtWidgets.QVBoxLayout(solo)
-        self.solo_settings = SideSettings("1p", "yamaneko", self._open_autoplay_keys, title="自分の盤面", languages=languages)
+        self.solo_settings = SideSettings("1p", default_engine(), self._open_autoplay_keys, title="自分の盤面", languages=languages)
         self.solo_settings.changed.connect(self._refresh_calibration_status)
         s_layout.addWidget(self.solo_settings, 1)
         calibrate_solo_btn = QtWidgets.QPushButton("一人用キャリブレーション")
